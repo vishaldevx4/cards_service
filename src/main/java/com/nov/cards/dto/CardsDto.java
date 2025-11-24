@@ -1,4 +1,4 @@
-package dto;
+package com.nov.cards.dto;
 
 import jakarta.annotation.Nonnull;
 import lombok.Data;
