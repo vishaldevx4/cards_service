@@ -1,4 +1,4 @@
-package dto;
+package com.nov.cards.dto;
 
 import jakarta.annotation.Nonnull;
 import lombok.Data;
@@ -11,10 +11,10 @@ public class CardsDto {
     private String mobileNumber;
 
 
-    private Long cardNumber;
+    private String cardNumber;
     private String cardType;
-    private String totalLimit;
-    private String amountUsed;
-    private String availableAmount;
+    private Integer totalLimit;
+    private Integer amountUsed;
+    private Integer availableAmount;
 
 }
