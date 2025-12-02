@@ -28,7 +28,7 @@ public class CardsController {
             @ApiResponse(responseCode = "400", description = "Invalid mobile number provided")
     })
     @PostMapping("/createCard")
-    public ResponseEntity<Object> createCard(
+    public ResponseEntity<ResponseDto> createCard(
             @Pattern(regexp = "^\\d{10}$", message = "Invalid mobile number format")
             @RequestParam String mobileNumber) {
 
@@ -36,7 +36,7 @@ public class CardsController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Card created for mobile number: " + mobileNumber);
+                .body(new ResponseDto(CardsConstants.STATUS_201, CardsConstants.MESSAGE_201));
     }
 
     //fetch cards
@@ -65,12 +65,20 @@ public class CardsController {
             @ApiResponse(responseCode = "400", description = "Invalid card details provided")
     })
     @PutMapping("/updateCard")
-    public ResponseEntity<Object> updateCard(
+    public ResponseEntity<ResponseDto> updateCard(
             @RequestBody(required = true) CardsDto cardsDto) {
-        iCardsService.updateCardDetails(cardsDto);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("Card details updated for card number: " + cardsDto.getCardNumber());
+        boolean isUpdated = iCardsService.updateCardDetails(cardsDto);
+
+        if(!isUpdated) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDto(CardsConstants.STATUS_400, CardsConstants.MESSAGE_400));
+        }else {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(CardsConstants.STATUS_200, "Card details updated for card number: " + cardsDto.getCardNumber()));
+        }
+
     }
 
 

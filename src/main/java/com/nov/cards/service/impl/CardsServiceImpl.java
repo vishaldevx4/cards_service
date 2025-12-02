@@ -9,12 +9,11 @@ import com.nov.cards.mapper.CardsMapper;
 import com.nov.cards.repository.CardsRepository;
 import com.nov.cards.service.ICardsService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
-import static org.springframework.util.ClassUtils.isPresent;
 
 @Service
 @AllArgsConstructor
@@ -22,12 +21,14 @@ public class CardsServiceImpl implements ICardsService {
 
     private CardsRepository cardsRepository;
 
+    private static final Logger LOGGER = LogManager.getLogger(CardsServiceImpl.class);
 
     @Override
     public void createCard(String mobileNumber) {
         Optional<Cards> fetchCards = cardsRepository.findCardByMobileNumber(mobileNumber);
 
-        if(fetchCards != null) {
+        if(fetchCards.isPresent()) {
+            LOGGER.info(fetchCards.toString());
             throw new ResourceAlredyExistsException("Card already exists for mobile number: " + mobileNumber);
         }
 
@@ -47,7 +48,7 @@ public class CardsServiceImpl implements ICardsService {
     }
 
     @Override
-    public void updateCardDetails(CardsDto cardsDto) {
+    public boolean updateCardDetails(CardsDto cardsDto) {
 
         Cards existingCard = cardsRepository.findCardByCardNumber(cardsDto.getCardNumber()).orElseThrow(
                 ()-> new ResourceNotFoundException("Card", "MobileNumber", cardsDto.getMobileNumber()));
@@ -55,6 +56,7 @@ public class CardsServiceImpl implements ICardsService {
         Cards updatedCard = CardsMapper.mapCardsDtoToCards(cardsDto, existingCard);
         cardsRepository.save(updatedCard);
 
+        return true;
     }
 
     /**

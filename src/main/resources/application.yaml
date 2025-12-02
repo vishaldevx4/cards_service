@@ -2,6 +2,8 @@ server:
   port: 9000
 
 spring:
+  application:
+    name: "cards"
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -16,3 +18,33 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import: "optional:configserver:http://localhost:8071"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  endpoint:
+    shutdown:
+      access: unrestricted
+
+eureka:
+  client:
+    service-url:
+      defaultZone: "http://localhost:8070/eureka/"
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+info:
+  app:
+    name: "${spring.application.name}"
+    description: "Cards Microservice for NOV Application"
+    version: "1.0.0"
+
